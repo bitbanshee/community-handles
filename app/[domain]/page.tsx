@@ -80,6 +80,8 @@ export default async function IndexPage({
             if (existing && existing.domain.name === domain) {
               if (existing.did !== profile.did) {
                 error2 = "handle taken"
+              } else if (existing.state == 'IN_REVIEW') {
+                error2 = "in review"
               }
             } else {
               await prisma.user.create({
@@ -181,6 +183,8 @@ export default async function IndexPage({
                         return "Invalid handle - please enter a different handle"
                       case "reserved":
                         return "Reserved handle - please enter a different handle"
+                      case "in review":
+                        return `Handle in review. It can take up to 2 days for someone to review. If you are in a hurry, try contacting one of the reviewers.`
                       default:
                         return "An error occured - please try again"
                     }

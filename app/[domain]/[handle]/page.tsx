@@ -34,7 +34,13 @@ export default async function HandlePage({ params }: Props) {
 
   try {
     const user = await prisma.user.findFirstOrThrow({
-      where: { handle, domain: { name: domain } },
+      where: {
+        handle,
+        domain: {
+          name: domain
+        },
+        state: 'APPROVED'
+      },
     })
 
     const profile = await agent.getProfile({

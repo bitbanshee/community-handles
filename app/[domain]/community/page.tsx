@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const PAGE_SIZE = 100
+const HANDLE_REVIEWERS = process.env["HANDLE_REVIEWERS"]?.split(',')
 
 export default async function CommunityPage({ params }: Props) {
   const domain = params.domain
@@ -47,6 +48,22 @@ export default async function CommunityPage({ params }: Props) {
           </Link>
           .
         </p>
+        {HANDLE_REVIEWERS &&
+        <p className="max-w-[980px] text-lg text-muted-foreground sm:text-xl">
+          Current handle reviewers:{" "}
+          {HANDLE_REVIEWERS.map((r, i) => {
+            const href = `https://bsky.app/profile/${r}`
+            return [
+              i > 0 && ", ",
+              <Link href={href} className="underline">
+                {r}
+              </Link>
+            ]
+          })
+          }
+          .
+        </p>
+        }
 
         <LoadMore
           domain={domain}

@@ -7,7 +7,13 @@ export const GET = async (
   { params }: { params: { domain: string; handle: string } }
 ) => {
   const { did } = await prisma.user.findFirstOrThrow({
-    where: { handle: params.handle, domain: { name: params.domain } },
+    where: {
+      handle: params.handle,
+      domain: {
+        name: params.domain
+      },
+      state: 'APPROVED'
+    },
   })
   return new Response(did, {
     headers: {
