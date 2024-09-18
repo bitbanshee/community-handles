@@ -6,8 +6,10 @@ import { prisma } from "@/lib/db"
 import { hasExplicitSlur } from "@/lib/slurs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Link } from "@/components/link"
 import { Profile } from "@/components/profile"
 import { Stage } from "@/components/stage"
+import { User } from "@prisma/client"
 
 export function generateMetadata({ params }: { params: { domain: string } }) {
   const domain = params.domain
@@ -35,6 +37,7 @@ export default async function IndexPage({
   let profile: AppBskyActorDefs.ProfileView | undefined
   let error1: string | undefined
   let error2: string | undefined
+  let createdUser: User | undefined
 
   if (handle) {
     try {
@@ -84,7 +87,7 @@ export default async function IndexPage({
                 error2 = "in review"
               }
             } else {
-              await prisma.user.create({
+              createdUser = await prisma.user.create({
                 data: {
                   handle,
                   did: profile.did,
@@ -172,6 +175,36 @@ export default async function IndexPage({
                 Enter the {domain} handle that you would like to have, not
                 including the @
               </p>
+              {createdUser && (
+                <>
+                  <p className="text-muted-forground mt-4 flex flex-row items-center gap-2 text-sm">
+                    <Check className="size-4 text-green-500" /> Handled created and in review.
+                  </p>
+                  <p className="text-muted-forground mt-4 flex flex-row items-center gap-2 text-sm">
+                    Your deletion key is <b className="inline text-sm text-muted-foreground"></b>. Keep it secret and safe.
+                  </p>
+                  <Input
+                    type="password"
+                    defaultValue={createdUser.id}
+                    readOnly
+                  />
+                  <Button type="button">Submit</Button>
+                  <p className="text-muted-forground mt-4 flex flex-row items-center gap-2 text-sm">
+                    You can opt-out your handle{" "}
+                    <Link href="/opt-out" className="underline">
+                      here
+                    </Link>
+                    .
+                  </p>
+                  <p className="text-muted-forground mt-4 flex flex-row items-center gap-2 text-sm">
+                    Wait for approval or reach out to one of our
+                    <Link href="/community" className="underline">
+                      reviewers
+                    </Link>
+                    .
+                  </p>
+                </>
+              )}
               {error2 && (
                 <p className="text-sm text-red-500">
                   {(() => {
