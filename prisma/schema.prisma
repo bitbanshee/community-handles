@@ -20,12 +20,13 @@ model Domain {
 }
 
 model User {
-  id       String @id @default(uuid())
-  did      String
-  handle   String
-  domainId String
-  state    UserState @default(IN_REVIEW)
-  domain   Domain @relation(fields: [domainId], references: [id])
+  id        String @id @default(uuid())
+  did       String
+  handle    String
+  domainId  String
+  state     UserState @default(IN_REVIEW)
+  domain    Domain @relation(fields: [domainId], references: [id])
+  optOutKey String @default(uuid())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

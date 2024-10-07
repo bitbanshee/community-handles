@@ -1,0 +1,52 @@
+services:
+  db-setter:
+    build:
+      target: prisma
+      cache_from:
+        - type=local,src=.docker_cache
+      cache_to:
+        - type=local,src=.docker_cache
+    command: pnpm prisma db push
+    env_file:
+      - .env.docker
+      - .env
+    networks:
+      - community
+    depends_on:
+      - db
+
+  community-handles:
+    build:
+      target: runner
+      cache_from:
+        - type=local,src=.docker_cache
+      cache_to:
+        - type=local,src=.docker_cache
+    env_file:
+      - .env.docker
+      - .env
+    networks:
+      - community
+    depends_on:
+      - db-setter
+
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    networks:
+      - community
+
+  proxy:
+    image: nginx
+    depends_on:
+      - community-handles
+    ports:
+      - 8080:80
+    volumes:
+      - ${PWD}/nginx.conf:/etc/nginx/conf.d/community-handles.conf:ro
+
+networks:
+  community: {}

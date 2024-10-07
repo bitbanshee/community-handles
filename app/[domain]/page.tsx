@@ -149,7 +149,7 @@ export default async function IndexPage({
               )}
               {profile && (
                 <>
-                  <p className="text-muted-forground mt-4 flex flex-row items-center gap-2 text-sm">
+                  <p className="text-muted-foreground mt-4 flex flex-row items-center gap-2 text-sm">
                     <Check className="size-4 text-green-500" /> Account found
                   </p>
                   <Profile profile={profile} className="mt-4" />
@@ -177,53 +177,95 @@ export default async function IndexPage({
               </p>
               {createdUser && (
                 <>
-                  <p className="text-muted-forground mt-4 flex flex-row items-center gap-2 text-sm">
+                  <p className="text-muted-foreground mt-4 flex flex-row items-center gap-2 text-sm">
                     <Check className="size-4 text-green-500" /> Handled created and in review.
                   </p>
-                  <p className="text-muted-forground mt-4 flex flex-row items-center gap-2 text-sm">
-                    Your deletion key is <b className="inline text-sm text-muted-foreground"></b>. Keep it secret and safe.
-                  </p>
-                  <Input
-                    type="password"
-                    defaultValue={createdUser.id}
-                    readOnly
-                  />
-                  <Button type="button">Submit</Button>
-                  <p className="text-muted-forground mt-4 flex flex-row items-center gap-2 text-sm">
+                  <label className="text-muted-foreground mt-4 flex flex-row items-center gap-2 text-sm">Your opt-out key is</label>
+                  <div className="relative">
+                    <input
+                      id="hs-toggle-password"
+                      type="password"
+                      value={createdUser.optOutKey}
+                      className="py-3 ps-4 pe-10 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder:text-neutral-500 dark:focus:ring-neutral-600"/>
+                    <button
+                      type="button"
+                      data-hs-toggle-password='{
+                        "target": "#hs-toggle-password"
+                      }'
+                      className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus:text-blue-600 dark:text-neutral-600 dark:focus:text-blue-500">
+                      <svg
+                        className="shrink-0 size-3.5"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path className="hs-password-active:hidden" d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                        <path className="hs-password-active:hidden" d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                        <path className="hs-password-active:hidden" d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                        <line className="hs-password-active:hidden" x1="2" x2="22" y1="2" y2="22"></line>
+                        <path className="hidden hs-password-active:block" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                        <circle className="hidden hs-password-active:block" cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                  <p className="text-muted-foreground mt-4 flex flex-row items-center gap-2 text-sm">
                     You can opt-out your handle{" "}
-                    <Link href="/opt-out" className="underline">
+                    <Link href={`${domain}/opt-out`} className="underline">
                       here
                     </Link>
-                    .
                   </p>
-                  <p className="text-muted-forground mt-4 flex flex-row items-center gap-2 text-sm">
+                  <p className="text-muted-foreground mt-4 flex flex-row items-center gap-2 text-sm">
                     Wait for approval or reach out to one of our
-                    <Link href="/community" className="underline">
+                    <Link href={`${domain}/community`} className="underline">
                       reviewers
                     </Link>
-                    .
                   </p>
                 </>
               )}
-              {error2 && (
-                <p className="text-sm text-red-500">
-                  {(() => {
+              {error2 && 
+                  (() => {
                     switch (error2) {
                       case "handle taken":
-                        return "Handle already taken - please enter a different handle"
+                        return (
+                          <p className="text-sm text-red-500">
+                            Handle already taken - please enter a different handle
+                          </p>
+                        )
                       case "invalid handle":
                       case "slur":
-                        return "Invalid handle - please enter a different handle"
+                        return (
+                          <p className="text-sm text-red-500">
+                            Invalid handle - please enter a different handle
+                          </p>
+                        )
                       case "reserved":
-                        return "Reserved handle - please enter a different handle"
+                        return (
+                          <p className="text-sm text-red-500">
+                            Reserved handle - please enter a different handle
+                          </p>
+                        )
                       case "in review":
-                        return `Handle in review. It can take up to 2 days for someone to review. If you are in a hurry, try contacting one of the reviewers.`
+                        return (
+                          <p className="text-sm text-red-500">
+                            Handle in review. It can take up to 2 days for someone to review it. If you are in a hurry, try contacting one of the{" "}
+                            <Link href={`${domain}/community`} className="underline">
+                              reviewers
+                            </Link>
+                          </p>
+                        )
                       default:
-                        return "An error occured - please try again"
+                        return (
+                          <p className="text-sm text-red-500">
+                            An error occured - please try again
+                          </p>
+                        )
                     }
-                  })()}
-                </p>
-              )}
+                  })()
+              }
             </div>
           </form>
         </Stage>
@@ -242,7 +284,7 @@ export default async function IndexPage({
           <p className="mt-6 max-w-lg text-sm">
             If you like this project, consider{" "}
             <a href="https://github.com/sponsors/mozzius" className="underline">
-              sponsoring my work
+              sponsoring mozzius&apos; work
             </a>
             .
           </p>
