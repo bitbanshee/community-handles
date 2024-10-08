@@ -32,6 +32,13 @@ export default async function CommunityPage({ params }: Props) {
     getUsers(domain),
   ])
 
+  const handleReviewersHandles = process.env["HANDLE_REVIEWERS"]?.split(',')
+  let handleReviewersProfiles: AppBskyActorDefs.ProfileViewDetailed[] | undefined
+  if (handleReviewersHandles) {
+    const response = await agent.getProfiles({ actors: handleReviewersHandles })
+    handleReviewersProfiles = response.data.profiles
+  }
+
   return (
     <main className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       <div className="flex max-w-[980px] flex-col items-start gap-4">
@@ -47,6 +54,16 @@ export default async function CommunityPage({ params }: Props) {
           </Link>
           .
         </p>
+        {handleReviewersProfiles && (
+          <>
+            <h2 className="mt-2 text-lg font-extrabold leading-tight tracking-tighter sm:text-lg md:text-xl lg:text-2xl">
+              Current handle reviewers:
+            </h2>
+            <div className="grid w-full grid-cols-1 gap-4 overflow-hidden sm:grid-cols-2 md:grid-cols-3">
+              <ProfileListSection profiles={handleReviewersProfiles} />
+            </div>
+          </>
+        )}
 
         <LoadMore
           domain={domain}
